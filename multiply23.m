@@ -1,0 +1,6 @@
+function f = multiply23(a,b)
+%%%2Œ¨æÿ’Û≥À“‘3Œ¨æÿ’Û
+for i = 1:size(b,3)
+    f(:,:,i) = a*b(:,:,i);
+end
+end

@@ -4,7 +4,7 @@ t = 15;
 T = 0.02;
 t_step = 1;
 data_stable = EngineCLMMSSC_3000_15;
-data_step = EngineCLMMSSC_3000_3060_1_15;;
+data_step = EngineCLMMSSC_3000_3060_1_15;
 data_design = EngineCLMMSSC_s_15;
 [P_norm_stable,T_norm_stable,Wf_norm_stable,N_norm_stable ,P_norm_step,...
     T_norm_step,Wf_norm_step,N_norm_step] = normal_data(data_stable,data_step,data_design,t,T);
@@ -49,7 +49,7 @@ for i = 1:size_a
     xx(:,i+1) = A*xx(:,i)+B*delta_u(:,i);
     yy(:,i) = C*xx(:,i)+D*delta_u(:,i);
 end    
-i = 3;
+i = 6;
 plot(delta_y(i,:)*100,'k');
 hold on
 plot(yy(i,:)*100,'r--')

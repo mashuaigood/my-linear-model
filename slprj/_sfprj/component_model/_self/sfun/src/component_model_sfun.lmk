@@ -1,0 +1,38 @@
+CC     = "E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\sys\lcc\bin\lcc.exe"
+LD     = "E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\sys\lcc\bin\lcclnk.exe"
+LIBCMD = "E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\sys\lcc\bin\lcclib.exe"
+CFLAGS = -c -Zp8 -DMATLAB_MEX_FILE -noregistrylookup 
+LDFLAGS = -s -dll -L"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\sys\lcc\lib" 
+LIBFLAGS = 
+
+OBJECTS = \
+	"component_model_sfun.obj"\
+	"c2_component_model.obj"\
+	"component_model_sfun_registry.obj"\
+	"lccstub.obj"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\sys\lcc\mex\lccdef.def"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\sf_runtime.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libmwblas.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libmx.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libmex.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libmat.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libfixedpoint.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libut.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libmwmathutil.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libemlrt.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\lib\win32\lcc\libmwsl_log_load_blocks.lib"\
+	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\lib\win32\libippmwipt.lib"\
+
+INCLUDE_PATH= -I"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\sys\lcc\include"  -I"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\extern\include"  -I"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\simulink\include"  -I"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\stateflow\c\mex\include"  -I"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\rtw\c\src"  -I"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\toolbox\CivilEnginelibV1\linemodel\slprj\_sfprj\component_model\_self\sfun\src" 
+ 
+
+component_model_sfun.mexw32 : $(MAKEFILE) $(OBJECTS)
+	$(LD) $(LDFLAGS) -o component_model_sfun.mexw32 @component_model_sfun.lmko
+component_model_sfun.obj :	"component_model_sfun.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "component_model_sfun.c"
+c2_component_model.obj :	"c2_component_model.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "c2_component_model.c"
+component_model_sfun_registry.obj :	"component_model_sfun_registry.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "component_model_sfun_registry.c"
+lccstub.obj :	"E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\sys\lcc\mex\lccstub.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\sys\lcc\mex\lccstub.c"

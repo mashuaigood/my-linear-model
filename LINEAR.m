@@ -1,10 +1,11 @@
 
-data_stable = EngineCLMMSSC_3000_15;
-data_step = EngineCLMMSSC_3000_3060_1_15;
-data_design = EngineCLMMSSC_s_15;
+
 t = 10;
 T = 0.02;
 t_step = 1;
+data_stable = EngineCLMMSSC_3000_15;
+data_step = EngineCLMMSSC_3000_3060_1_15;
+data_design = EngineCLMMSSC_s_15;
 [P_norm_stable,T_norm_stable,Wf_norm_stable,N_norm_stable ,P_norm_step,...
     T_norm_step,Wf_norm_step,N_norm_step] = normal_data(data_stable,data_step,data_design,t,T);
 P_i = [38,53,59];%序号代表P3,P46,P6
@@ -38,7 +39,6 @@ delta_x_dot = diff(PN,1,1)/T;
 delta_x_dot = [delta_x_dot;delta_x_dot(end,:)]';
 delta_xx = delta_x(:,2:end);
 delta_xx = [delta_xx,delta_x(:,end)];
-
 %控制变量Wf,状态变量Nl,Nh,输出变量Nl,Nh，P3,P46,P6，T22,T3,T5
 % A是2*2，B是2*1，C是8*2，D是8*1
 A = randn(2,2)*10;
@@ -62,4 +62,5 @@ fun = @(H)y_ - H*x;
 [P,pp] = lsqnonlin(fun,H0);
 P(abs(P)<0.000001) = 0;
 dlmwrite('P.mat',P);
+pp
 clear P_i T_i l_p l_t size_a size_b 
