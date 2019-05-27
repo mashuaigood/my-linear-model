@@ -23,4 +23,5 @@ piece.mean_design = mean_design;
 piece.P_index = P_i ; piece.T_index = T_i; 
 piece.HP_index = HP_index;piece.U_index = U_index;
 piece.K_s = K_s;
-save('piece.mat','piece')
+save('data_cal\\piece.mat','piece')
+load('nonlinear_data\\engine_data1')

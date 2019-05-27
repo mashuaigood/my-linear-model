@@ -16,7 +16,7 @@ P_noise = [0.005,0.005,0.005,0.005];
 T_noise = [0.0075,0.0075,0.0075,0.0075];
 R = diag([N_noise,P_noise,T_noise].^2);
 %% system noise
-Q =  0.002^2*eye(size(A_k,1));
+Q =  0.0002^2*eye(size(A_k,1));
 Q_ = 0.002^2*eye(size(A,1));
 %% kalman gain
 for k = 1:size(A_k,3)
@@ -30,5 +30,5 @@ for k = 1:size(A_k,3)
     K_s(:,:,k) = P_*C(:,:,k)'/(C(:,:,k)*P_*C(:,:,k)'+R);
 end
 
-save('K.mat','K');save('K_s.mat','K_s');
+save('data_cal\\K.mat','K');save('data_cal\\K_s.mat','K_s');
 % clear K Q R w v 

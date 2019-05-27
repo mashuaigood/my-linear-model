@@ -6,7 +6,7 @@ load('data_cal\\D.mat');load('data_cal\\M.mat');load('data_cal\\B.mat');load('da
 load('data_cal\\Nl.mat');
 load('data_cal\\P_stable.mat');load('data_cal\\T_stable.mat');
 load('data_cal\\N_stable.mat');load('data_cal\\Wf_stable.mat');
-load('data_cal\\engine_data.mat');
+load('nonlinear_data\\engine_data.mat');
 test_data = engine_data.data;
 load('data_cal\\K.mat');
 load('data_cal\\A_k.mat');load('data_cal\\B_k.mat');load('data_cal\\C_k.mat');load('data_cal\\D_k.mat');
@@ -25,7 +25,7 @@ index_h = index_data(4:end);
 
 clear A_k_ B_k_ C_k_ D_k_ P_stable_ T_stable_ N_stable_ Wf_stable_
 
-
+mean_design(1:2) = mean_design(1:2)*0.0025
 P_norm = P_norm_step(:,P_i)';
 T_norm = T_norm_step(:,T_i)';
 N_norm = N_norm_step(:,1:2)';
