@@ -1,14 +1,14 @@
 
 
-load('data_cal\\A_k.mat');
-load('data_cal\\B_k.mat');
-load('data_cal\\C_k.mat');
-load('data_cal\\D_k.mat');
-load('data_cal\\Wf_stable.mat');
-load('data_cal\\A.mat');
-load('data_cal\\B.mat');
-load('data_cal\\C.mat');
-load('data_cal\\D.mat');
+load('A_k.mat');
+load('B_k.mat');
+load('C_k.mat');
+load('D_k.mat');
+load('Wf_stable.mat');
+load('A.mat');
+load('B.mat');
+load('C.mat');
+load('D.mat');
 clear K
 %% measurement noise
 N_noise = [0.0025,0.0025];
@@ -17,7 +17,7 @@ T_noise = [0.0075,0.0075,0.0075,0.0075];
 R = diag([N_noise,P_noise,T_noise].^2);
 %% system noise
 Q =  0.002^2*eye(size(A_k,1));
-Q_ = 0.002^2*eye(size(A,1));
+
 %% kalman gain
 for k = 1:size(A_k,3)
 %     w = 0.002^2*randn(size(Wf_stable{1},1),size(Q,1));
@@ -26,8 +26,8 @@ for k = 1:size(A_k,3)
     K(:,:,k) = P*C_k(:,:,k)'/(C_k(:,:,k)*P*C_k(:,:,k)'+R);
 %     K(:,:,k) = P'*C_k(:,:,k)'/R;
 %     K(:,:,k) = G';
-    [P_,~,G_] = dare(A(:,:,k)',C(:,:,k)',Q_',R');
-    K_s(:,:,k) = P_*C(:,:,k)'/(C(:,:,k)*P_*C(:,:,k)'+R);
+    [P_,~,G_] = dare(A(:,:,k)',C(:,:,k)',Q_',R_');
+    K_s(:,:,k) = P_*C(:,:,k)'/(C(:,:,k)*P_*C(:,:,k)'+R_);
 end
 
 save('K.mat','K');save('K_s.mat','K_s');

@@ -63,8 +63,7 @@ for j = 1:11
         x_{j,i} = [delta_x{j,i};delta_up{j,i}];
         y_{j,i} = [delta_xx{j,i};delta_y{j,i}];
     end
-    P_stable{j} = P_norm_stable;T_stable{j} = T_norm_stable;N_stable{j} = N_norm_stable;
-    Wf_stable{j} = [Wf_norm_stable,data_stable(:,50:51),data_step(:,index_h+49)-1];
+    P_stable{j} = P_norm_stable;T_stable{j} = T_norm_stable;N_stable{j} = N_norm_stable;Wf_stable{j} = [Wf_norm_stable,data_stable(:,50:51),data_step(:,index_h+49)-1];
 
     num_state = 2; num_output = l_p+l_t+2; num_control = 3; num_health = length(index_h);
     A = randn(num_state,num_state)*10;
@@ -92,8 +91,7 @@ for j = 1:11
     Nl(j) = N_norm_stable(5,1);  %取一个风扇转速稳态值 
 end
 save('data_cal\\P_.mat','P_');save('data_cal\\Nl.mat','Nl');
-save('data_cal\\P_stable.mat','P_stable');save('data_cal\\T_stable.mat','T_stable');
-save('data_cal\\N_stable.mat','N_stable');save('data_cal\\Wf_stable.mat','Wf_stable');
+save('data_cal\\P_stable.mat','P_stable');save('data_cal\\T_stable.mat','T_stable');save('data_cal\\N_stable.mat','N_stable');save('data_cal\\Wf_stable.mat','Wf_stable');
 for j = 1:size(P_,3)
     Aa = P_(1:num_state,1:num_state,j);
     Ba = P_(1:num_state,num_state+1:num_state+1+num_control-1,j);
@@ -110,8 +108,7 @@ for j = 1:size(P_,3)
 end
 %% save parameters
 B = BL(:,1:size(Ba,2),:);L = BL(:,size(Ba,2)+1:end,:);D = DM(:,1:size(Da,2),:);M = DM(:,size(Da,2)+1:end,:);
-save('data_cal\\A.mat','A');save('data_cal\\BL.mat','BL');save('data_cal\\C.mat','C');save('data_cal\\DM.mat','DM');
-save('data_cal\\D.mat','D');save('data_cal\\M.mat','M');save('data_cal\\B.mat','B');save('data_cal\\L.mat','L');
+save('data_cal\\A.mat','A');save('data_cal\\BL.mat','BL');save('data_cal\\C.mat','C');save('data_cal\\DM.mat','DM');save('data_cal\\D.mat','D');save('data_cal\\M.mat','M');save('data_cal\\B.mat','B');save('data_cal\\L.mat','L');
 
 % 状态方程有变化,需要把健康参数增广到状态变量里面去。
 % A_k = [[A,L];repmat([zeros(length(index_h),size(A,2)),zeros(length(index_h),size(L,2))],[1,1,size(A,3)])];
@@ -121,8 +118,7 @@ C_k = [C,M];
 D_k = D;
 save('data_cal\\A_k.mat','A_k');save('data_cal\\B_k.mat','B_k');save('data_cal\\C_k.mat','C_k');save('data_cal\\D_k.mat','D_k');
 save('data_cal\\mean_design.mat','mean_design');save('data_cal\\TP2_stable.mat','TP2_stable');
-save('data_cal\\P_index.mat','P_i');save('data_cal\\T_index.mat','T_i');
-save('data_cal\\HP_index.mat','HP_index');save('data_cal\\U_index.mat','U_index');
+save('data_cal\\P_index.mat','P_i');save('data_cal\\T_index.mat','T_i');save('data_cal\\HP_index.mat','HP_index');save('data_cal\\U_index.mat','U_index');
 
 
 

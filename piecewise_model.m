@@ -1,24 +1,24 @@
 clear 
 load('nonlinear_data\\data_design');
-load('nonlinear_data\\A.mat');load('nonlinear_data\\BL.mat');
-load('nonlinear_data\\C.mat');load('nonlinear_data\\DM.mat');
-load('nonlinear_data\\D.mat');load('nonlinear_data\\M.mat');load('nonlinear_data\\B.mat');load('nonlinear_data\\L.mat');
-load('nonlinear_data\\Nl.mat');
-load('nonlinear_data\\P_stable.mat');load('nonlinear_data\\T_stable.mat');
-load('nonlinear_data\\N_stable.mat');load('nonlinear_data\\Wf_stable.mat');
-load('nonlinear_data\\engine_data.mat');
+load('data_cal\\A.mat');load('data_cal\\BL.mat');
+load('data_cal\\C.mat');load('data_cal\\DM.mat');
+load('data_cal\\D.mat');load('data_cal\\M.mat');load('data_cal\\B.mat');load('data_cal\\L.mat');
+load('data_cal\\Nl.mat');
+load('data_cal\\P_stable.mat');load('data_cal\\T_stable.mat');
+load('data_cal\\N_stable.mat');load('data_cal\\Wf_stable.mat');
+load('data_cal\\engine_data.mat');
 test_data = engine_data.data;
-load('nonlinear_data\\K.mat');
-load('nonlinear_data\\A_k.mat');load('nonlinear_data\\B_k.mat');load('nonlinear_data\\C_k.mat');load('nonlinear_data\\D_k.mat');
-load('nonlinear_data\\mean_design.mat');
-load('nonlinear_data\\HP_index.mat');load('nonlinear_data\\T_index.mat');load('nonlinear_data\\P_index.mat');load('nonlinear_data\\U_index.mat');
+load('data_cal\\K.mat');
+load('data_cal\\A_k.mat');load('data_cal\\B_k.mat');load('data_cal\\C_k.mat');load('data_cal\\D_k.mat');
+load('data_cal\\mean_design.mat');
+load('data_cal\\HP_index.mat');load('data_cal\\T_index.mat');load('data_cal\\P_index.mat');load('data_cal\\U_index.mat');
 t = (size(test_data,1)-1)*0.02;
 T = 0.02;
 index_data = [0,1,2,4,5,6,7,8,9,10,11,12,13];
 % P_i = [16,22,28,38];%序号代表P13,P24,P3,P5,P45
 % T_i = [15,21,27,37];%序号代表T13,T24,T3,T5,T45
-P_i = [16,22,28];%序号代表P13,P24,P3,P5,P45
-T_i = [15,27];%序号代表T13,T24,T3,T5,T45
+P_i = [16,22,28,38];%序号代表P21,P24,P3,P5
+T_i = [15,21,27,37];%序号代表T21,T24,T3,T5 
 index_h = index_data(4:end);
 [P_norm_stable,T_norm_stable,Wf_norm_stable,N_norm_stable ,P_norm_step,...
             T_norm_step,Wf_norm_step,N_norm_step] = normal_data(test_data,test_data,data_design,t,T);
@@ -53,8 +53,7 @@ for i = 1:size(A,3)             %把三维矩阵变成2维，方便插值
     steadyState(:,:,i) = N_stable__';
     steadyOutput(:,:,i) =  [ N_stable__,P_stable__,T_stable__]';
     steadyHP(:,:,i) = Wf_stable__(:,4:end)';
-end
-clear A_k__ B_k__ C_k__ D_k__ P_stable__ T_stable__ N_stable__ Wf_stable__
+    endclear A_k__ B_k__ C_k__ D_k__ P_stable__ T_stable__ N_stable__ Wf_stable__
 
 
 % % Nl_(:,1) = N_norm(1,1);          %初始的索引转速
