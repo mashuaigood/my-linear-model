@@ -11,9 +11,9 @@ load('data_cal\\C.mat');
 load('data_cal\\D.mat');
 clear K 
 %% measurement noise
-N_noise = [0.051,0.051];
-P_noise = [0.164,0.164,0.15,0.15];
-T_noise = [0.23,0.23,0.097,0.097];
+N_noise = [0.051,0.051]*0.01;
+P_noise = [0.164,0.164,0.15,0.15]*0.01;
+T_noise = [0.23,0.23,0.097,0.097]*0.01;
 R = diag([N_noise,P_noise,T_noise].^2);
 %% system noise
 Q =  0.002*eye(size(A_k,1));
