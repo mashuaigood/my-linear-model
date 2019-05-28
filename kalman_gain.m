@@ -11,13 +11,13 @@ load('data_cal\\C.mat');
 load('data_cal\\D.mat');
 clear K 
 %% measurement noise
-N_noise = [0.051,0.051]*0.01;
-P_noise = [0.164,0.164,0.15,0.15]*0.01;
-T_noise = [0.23,0.23,0.097,0.097]*0.01;
+N_noise = [0.051,0.051];
+P_noise = [0.164,0.164,0.15,0.15];
+T_noise = [0.23,0.23,0.097,0.097];
 R = diag([N_noise,P_noise,T_noise].^2);
 %% system noise
-Q =  0.002^2*eye(size(A_k,1));
-Q_ = 0.002^2*eye(size(A,1));
+Q =  0.002*eye(size(A_k,1));
+Q_ = 0.002*eye(size(A,1));
 %% kalman gain
 for k = 1:size(A_k,3)
 %     w = 0.002^2*randn(size(Wf_stable{1},1),size(Q,1));
