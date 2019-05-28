@@ -1,5 +1,6 @@
 clear 
 load('nonlinear_data\\data_design');
+load('nonlinear_data\\health_data');
 load('data_cal\\A.mat');load('data_cal\\BL.mat');
 load('data_cal\\C.mat');load('data_cal\\DM.mat');
 load('data_cal\\D.mat');load('data_cal\\M.mat');load('data_cal\\B.mat');load('data_cal\\L.mat');
@@ -12,6 +13,7 @@ load('data_cal\\K.mat');
 load('data_cal\\A_k.mat');load('data_cal\\B_k.mat');load('data_cal\\C_k.mat');load('data_cal\\D_k.mat');
 load('data_cal\\mean_design.mat');
 load('data_cal\\HP_index.mat');load('data_cal\\T_index.mat');load('data_cal\\P_index.mat');load('data_cal\\U_index.mat');
+
 t = (size(test_data,1)-1)*0.02;
 T = 0.02;
 index_data = [0,1,2,4,5,6,7,8,9,10,11,12,13];
@@ -25,7 +27,7 @@ index_h = index_data(4:end);
 
 clear A_k_ B_k_ C_k_ D_k_ P_stable_ T_stable_ N_stable_ Wf_stable_
 
-mean_design(1:2) = mean_design(1:2)*0.0025
+% mean_design(1:2) = mean_design(1:2)*0.0025;
 P_norm = P_norm_step(:,P_i)';
 T_norm = T_norm_step(:,T_i)';
 N_norm = N_norm_step(:,1:2)';
