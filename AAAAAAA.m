@@ -8,12 +8,16 @@ piece.Nl = Nl;
 piece.steadyHP = steadyHP;
 piece.steadyInput = steadyInput;piece.steadyOutput = steadyOutput;
 piece.steadyState = steadyState;
-piece.U = U;
-piece.HP = HP;piece.Wf_stable_ = Wf_stable_;piece.N_stable_ = N_stable_;
-N.time = [];
-N.signals.values = N_norm';
-N.signals.dimensions =2;
-piece.N = N;
+% piece.U = U;
+% piece.HP = HP;
+piece.u_stable_ = u_stable_;
+piece.x_stable_ = x_stable_;
+% N.time = [];
+% N.signals.values = N_norm';
+% N.signals.dimensions =2;
+% piece.N = N;
+piece.y_index = y_index;
+piece.x_index = x_index;
 piece.K = K;
 piece.A_k = A_k;
 piece.B_k = B_k;
@@ -26,4 +30,4 @@ piece.K_s = K_s;
 piece.S_s = S_s;
 piece.S_det = S_det;
 save('data_cal\\piece.mat','piece')
-load('nonlinear_data\\engine_data1')
+load('nonlinear_data\\health_data')

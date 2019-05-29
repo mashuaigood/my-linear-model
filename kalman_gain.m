@@ -4,17 +4,21 @@ load('data_cal\\A_k.mat');
 load('data_cal\\B_k.mat');
 load('data_cal\\C_k.mat');
 load('data_cal\\D_k.mat');
-load('data_cal\\Wf_stable.mat');
+ load('data_cal\\mean_design.mat');
 load('data_cal\\A.mat');
 load('data_cal\\B.mat');
 load('data_cal\\C.mat');
 load('data_cal\\D.mat');
+load('data_cal\\y_index.mat');
 clear K 
 %% measurement noise
+y_design = mean_design(y_index);
 N_noise = [0.051,0.051]*0.01;
 P_noise = [0.164,0.164,0.15,0.15]*0.01;
 T_noise = [0.23,0.23,0.097,0.097]*0.01;
-R = diag([N_noise,P_noise,T_noise].^2);
+y_svar = [N_noise,P_noise,T_noise];
+y_noise = y_svar.*y_design;
+R = diag(y_noise.^2);
 %% system noise
 Q =  0.002*eye(size(A_k,1));
 Q_ = 0.002*eye(size(A,1));

@@ -17,6 +17,8 @@ mean_design = mean(data_design,1);
 N_i = [1,2];
 P_i = [16,22,28,38];%序号代表P21,P24,P3,P5
 T_i = [15,21,27,37];%序号代表T21,T24,T3,T5 
+y_index = [N_i,P_i,T_i];
+x_index = N_i;
 for j = 1:11
     data = eval(['load(''nonlinear_data\\data',num2str(j),'.mat'')']);
     data_stable = eval(['data.data',num2str(j)]);
@@ -40,15 +42,15 @@ for j = 1:11
 %         [P_norm_stable,T_norm_stable,Wf_norm_stable,N_norm_stable ,P_norm_step,...
 %             T_norm_step,Wf_norm_step,N_norm_step] = normal_data(data_stable,data_step,data_design,t,T);
         
-
+        delta_step_{j,i} = delta_step;
         l_p = length(P_i);
         l_t = length(T_i);
         
         %% 提取需要的参数，并乘以归一化矩阵
-        delta_y{j,i} = Ny(:,:,j)\delta_step(:,[N_i,P_i,T_i])';
-        delta_x{j,i} = Nx(:,:,j)\delta_step(:,N_i)';                               %状态变量
+        delta_y{j,i} = Ny(:,:,j)\delta_step(:,y_index)';
+        delta_x{j,i} = Nx(:,:,j)\delta_step(:,x_index)';                               %状态变量
         delta_u{j,i} = Nu(:,:,j)\delta_step(:,U_index)';                           %控制变量
-        delta_p{j,i} = delta_step(:,HP_index)'-1;                                  %健康参数
+        delta_p{j,i} = delta_step(:,HP_index)';                                  %健康参数
         delta_up{j,i} = Nuhp(:,:,j)\[delta_step(:,U_index)';delta_p{j,i}];         %控制+健康
         delta_xx{j,i} = delta_x{j,i}(:,2:end);
         delta_xx{j,i} = [delta_xx{j,i},delta_x{j,i}(:,end)];
@@ -84,17 +86,17 @@ for j = 1:11
 %         x_{j,i} = [delta_x{j,i};delta_up{j,i}];
 %         y_{j,i} = [delta_xx{j,i};delta_y{j,i}];
     end
-    y_stable{j} = mean_stable([N_i,P_i,T_i]);
+    y_stable{j} = mean_stable(y_index);
 %     Wf_stable{j} = [Wf_norm_stable,data_stable(:,50:51),data_step(:,index_h+49)-1];
     u_stable{j} = mean_stable([U_index,HP_index]);
 
     num_state = 2; num_output = l_p+l_t+2; num_control = 3; num_health = length(index_h);
-    A = randn(num_state,num_state)*10;
-    B = randn(num_state,num_control)*10;
-    C = randn(num_output,num_state)*10;
-    D = randn(num_output,num_control)*10;
-    L = randn(num_state,num_health)*10;
-    M = randn(num_output,num_health)*10;
+    A = randn(num_state,num_state);
+    B = randn(num_state,num_control);
+    C = randn(num_output,num_state);
+    D = randn(num_output,num_control);
+    L = randn(num_state,num_health);
+    M = randn(num_output,num_health);
     BL = [B,L];
     DM = [D,M];
     AA = [A,BL];
@@ -107,7 +109,7 @@ for j = 1:11
     end
     fun = @(H)yy - multiply23(H,xx);
     [P,pp] = lsqnonlin(fun,H0);
-    P(abs(P)<0.000001) = 0;
+%     P(abs(P)<0.000001) = 0;
     pp
     clear  l_p l_t size_a size_b  A B C D L M BL DM
     P_(:,:,j) = P;
@@ -154,6 +156,8 @@ save('data_cal\\P_index.mat','P_i');
 save('data_cal\\T_index.mat','T_i');
 save('data_cal\\HP_index.mat','HP_index');
 save('data_cal\\U_index.mat','U_index');
+save('data_cal\\y_index.mat','y_index');
+save('data_cal\\x_index.mat','x_index');
 
 
 

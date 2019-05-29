@@ -5,40 +5,40 @@ load('data_cal\\A.mat');load('data_cal\\BL.mat');
 load('data_cal\\C.mat');load('data_cal\\DM.mat');
 load('data_cal\\D.mat');load('data_cal\\M.mat');load('data_cal\\B.mat');load('data_cal\\L.mat');
 load('data_cal\\Nl.mat');
-load('data_cal\\P_stable.mat');load('data_cal\\T_stable.mat');
-load('data_cal\\N_stable.mat');load('data_cal\\Wf_stable.mat');
+load('data_cal\\y_stable.mat');load('data_cal\\u_stable.mat');
 load('nonlinear_data\\engine_data.mat');
 test_data = engine_data.data;
-load('data_cal\\K.mat');
+load('data_cal\\K.mat');load('data_cal\\K_s.mat');load('data_cal\\S_s.mat');
 load('data_cal\\A_k.mat');load('data_cal\\B_k.mat');load('data_cal\\C_k.mat');load('data_cal\\D_k.mat');
 load('data_cal\\mean_design.mat');
 load('data_cal\\HP_index.mat');load('data_cal\\T_index.mat');load('data_cal\\P_index.mat');load('data_cal\\U_index.mat');
-
+load('data_cal\\y_index.mat');load('data_cal\\x_index.mat');
 t = (size(test_data,1)-1)*0.02;
 T = 0.02;
 index_data = [0,1,2,4,5,6,7,8,9,10,11,12,13];
+% y_index = [[1,2],P_i,T_i];
 % P_i = [16,22,28,38];%序号代表P13,P24,P3,P5,P45
 % T_i = [15,21,27,37];%序号代表T13,T24,T3,T5,T45
-P_i = [16,22,28,38];%序号代表P21,P24,P3,P5
-T_i = [15,21,27,37];%序号代表T21,T24,T3,T5 
-index_h = index_data(4:end);
-[P_norm_stable,T_norm_stable,Wf_norm_stable,N_norm_stable ,P_norm_step,...
-            T_norm_step,Wf_norm_step,N_norm_step] = normal_data(test_data,test_data,data_design,t,T);
+% P_i = [16,22,28,38];%序号代表P21,P24,P3,P5
+% T_i = [15,21,27,37];%序号代表T21,T24,T3,T5 
+% index_h = index_data(4:end);
+% [P_norm_stable,T_norm_stable,Wf_norm_stable,N_norm_stable ,P_norm_step,...
+%             T_norm_step,Wf_norm_step,N_norm_step] = normal_data(test_data,test_data,data_design,t,T);
 
-clear A_k_ B_k_ C_k_ D_k_ P_stable_ T_stable_ N_stable_ Wf_stable_
+% clear A_k_ B_k_ C_k_ D_k_ P_stable_ T_stable_ N_stable_ Wf_stable_
 
 % mean_design(1:2) = mean_design(1:2)*0.0025;
-P_norm = P_norm_step(:,P_i)';
-T_norm = T_norm_step(:,T_i)';
-N_norm = N_norm_step(:,1:2)';
-U_norm = [Wf_norm_step,test_data(:,50:51),test_data(:,index_h+49)-1]';
+% P_norm = P_norm_step(:,P_i)';
+% T_norm = T_norm_step(:,T_i)';
+% N_norm = N_norm_step(:,1:2)';
+% U_norm = [Wf_norm_step,test_data(:,50:51),test_data(:,index_h+49)-1]';
 
-HP.time = [];
-HP.signals.values = test_data(:,index_h+49)-1;
-HP.signals.dimensions =length(HP_index);
-U.time = [];
-U.signals.values = [Wf_norm_step,test_data(:,50:51)];
-U.signals.dimensions =length(U_index);
+% HP.time = [];
+% HP.signals.values = test_data(:,HP_index)-1;
+% HP.signals.dimensions =length(HP_index);
+% U.time = [];
+% U.signals.values = [Wf_norm_step,test_data(:,50:51)];
+% U.signals.dimensions =length(U_index);
 
 
 for i = 1:size(A,3)             %把三维矩阵变成2维，方便插值
@@ -47,14 +47,14 @@ for i = 1:size(A,3)             %把三维矩阵变成2维，方便插值
     C_k__ = C(:,:,i);C_k_(i,:) = C_k__(:);
     D_k__ = DM(:,:,i);D_k_(i,:) = D_k__(:);
     
-    P_stable__ = P_stable{i}(1,P_i);P_stable_(i,:) = P_stable__(:);
-    T_stable__ = T_stable{i}(1,T_i);T_stable_(i,:) = T_stable__(:);
-    N_stable__ = N_stable{i}(1,[1,2]);N_stable_(i,:) = N_stable__(:);
-    Wf_stable__ = Wf_stable{i}(1,:);Wf_stable_(i,:) = Wf_stable__(:);
-    steadyInput(:,:,i) = Wf_stable__(:,1:3)';
-    steadyState(:,:,i) = N_stable__';
-    steadyOutput(:,:,i) =  [ N_stable__,P_stable__,T_stable__]';
-    steadyHP(:,:,i) = Wf_stable__(:,4:end)';
+    y_stable__ = y_stable{i};y_stable_(i,:) = y_stable__(:);
+%     T_stable__ = T_stable{i}(1,T_i);T_stable_(i,:) = T_stable__(:);
+    x_stable__ = y_stable{i}(1,[1,2]);x_stable_(i,:) = x_stable__(:);
+    u_stable__ = u_stable{i}(1,1:3);u_stable_(i,:) = u_stable__(:);
+    steadyInput(:,:,i) = u_stable__';
+    steadyState(:,:,i) = x_stable__';
+    steadyOutput(:,:,i) =  y_stable__';
+    steadyHP(:,:,i) = zeros(length(HP_index),1);
 end
 clear A_k__ B_k__ C_k__ D_k__ P_stable__ T_stable__ N_stable__ Wf_stable__
 
