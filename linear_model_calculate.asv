@@ -45,11 +45,11 @@ for j = 1:11
         l_t = length(T_i);
         
         %% 提取需要的参数，并乘以归一化矩阵
-        delta_y{j,i} = Ny(:,:,j)\delta_step(:,[N_i,P_i,T_i])';
+        delta_y{j,i} = Ny(:,:,j)\dalta_step(:,[N_i,P_i,T_i])';
         delta_x{j,i} = Nx(:,:,j)\delta_step(:,N_i)';                               %状态变量
-        delta_u{j,i} = Nu(:,:,j)\delta_step(:,U_index)';                           %控制变量
-        delta_p{j,i} = delta_step(:,HP_index)'-1;                                  %健康参数
-        delta_up{j,i} = Nuhp(:,:,j)\[delta_step(:,U_index)';delta_p{j,i}];         %控制+健康
+        delta_u{j,i} = Nu(:,:,j)\d_step(:,U_index)';                           %控制变量
+        delta_p{j,i} = data_step(:,HP_index)'-1;                                  %健康参数
+        delta_up{j,i} = Nuhp(:,:,j)\[data_step(:,U_index)';delta_p{j,i}];         %控制+健康
         delta_xx{j,i} = delta_x{j,i}(:,2:end);
         delta_xx{j,i} = [delta_xx{j,i},delta_x{j,i}(:,end)];
         x_{j,i} = [delta_x{j,i};delta_up{j,i}];
@@ -122,7 +122,7 @@ for j = 1:size(P_,3)
     Aa = Nx(:,:,j)*P_(1:num_state,1:num_state,j)/Nx(:,:,j);
     Ba = P_(1:num_state,num_state+1:num_state+1+num_control-1,j);
     La = P_(1:num_state,num_state+1+num_control:end,j);
-    Ca = Ny(:,:,j)*P_(num_state+1:end,1:num_state,j)/Nx(:,:,j);
+    Ca = Ny(:,:,j)*P_(num_state+1:end,1:num_state,j)/Ny(:,:,j);
     Da = P_(num_state+1:end,num_state+1:num_state+1+num_control-1,j);
     Ma = P_(num_state+1:end,num_state+1+num_control:end,j);
     BLa = Nx(:,:,j)*[Ba,La]/Nuhp(:,:,j);
