@@ -22,7 +22,10 @@ x_index = N_i;
 
 
 %% 用设计点参数进行归一化
-
+Nx = diag(mean_design(N_i));
+Ny = diag(mean_design([N_i,P_i,T_i]));
+Nu = diag(mean_design(U_index));
+Nuhp = diag([mean_design(U_index),ones(1,length(index_h))]);
 for j = 1:11
     data = eval(['load(''nonlinear_data\\data',num2str(j),'.mat'')']);
     data_stable = eval(['data.data',num2str(j)]);
@@ -32,34 +35,63 @@ for j = 1:11
 %     TP2_stable(:,j) = [T2_stable,P2_stable]';
 
 %% 计算稳态的均值，并且构造状态、测量、控制量的归一化矩阵
-    mean_stable = mean(data_stable,1);
-    Nx(:,:,j) = diag(mean_design(N_i));
-    Ny(:,:,j) = diag(mean_design([N_i,P_i,T_i]));
-    Nu(:,:,j) = diag(mean_design(U_index)+[0,1,1]);
-    Nuhp(:,:,j) = diag([mean_design(U_index)+[0,1,1],ones(1,length(index_h))]);
-    
+%     mean_stable = mean(data_stable,1);
+%     Nx(:,:,j) = diag(mean_stable(N_i));
+%     Ny(:,:,j) = diag(mean_stable([N_i,P_i,T_i]));
+%     Nu(:,:,j) = diag(U_index);
+%     Nuhp(:,:,j) = diag([U_index,ones(1,length(index_h))]);
+%     
     
     for i = 1:index_l
         % data_stable = eval(['data.data',num2str(j)]);
         data_step = eval(['data.data',num2str(j),'_',num2str(index_data(i))]);
         delta_step = data_step-data_stable;
-
+%         [P_norm_stable,T_norm_stable,Wf_norm_stable,N_norm_stable ,P_norm_step,...
+%             T_norm_step,Wf_norm_step,N_norm_step] = normal_data(data_stable,data_step,data_design,t,T);
         
         delta_step_{j,i} = delta_step;
         l_p = length(P_i);
         l_t = length(T_i);
         
         %% 提取需要的参数，并乘以归一化矩阵
-        delta_y{j,i} = Ny(:,:,j)\delta_step(:,y_index)';
-        delta_x{j,i} = Nx(:,:,j)\delta_step(:,x_index)';                               %状态变量
-        delta_u{j,i} = Nu(:,:,j)\delta_step(:,U_index)';                           %控制变量
+        delta_y{j,i} = Ny\delta_step(:,y_index)';
+        delta_x{j,i} = Nx\delta_step(:,x_index)';                               %状态变量
+        delta_u{j,i} = Nu\delta_step(:,U_index)';                           %控制变量
         delta_p{j,i} = delta_step(:,HP_index)';                                  %健康参数
-        delta_up{j,i} = Nuhp(:,:,j)\[delta_step(:,U_index)';delta_p{j,i}];         %控制+健康
+        delta_up{j,i} = Nuhp\[delta_step(:,U_index)';delta_p{j,i}];         %控制+健康
         delta_xx{j,i} = delta_x{j,i}(:,2:end);
         delta_xx{j,i} = [delta_xx{j,i},delta_x{j,i}(:,end)];
         x_{j,i} = [delta_x{j,i};delta_up{j,i}];
         y_{j,i} = [delta_xx{j,i};delta_y{j,i}];
-
+%         [size_a,size_b] = size(P_norm_stable);
+%         PP = zeros(size_a,l_p);
+%         PT = zeros(size_a,l_t);
+%         PN = zeros(size_a,2);
+%         for k = 1:l_p
+%             PP(:,k) = P_norm_step(:,P_i(k))-P_norm_stable(:,P_i(k));
+% %             PP(:,k) = P_norm_step(:,P_i(k));
+%         end
+%         for k = 1:l_t
+%             PT(:,k) = T_norm_step(:,T_i(k))-T_norm_stable(:,T_i(k));
+% %             PT(:,k) = T_norm_step(:,T_i(k));
+%         end
+%         for k =1:2
+%             PN(:,k) = N_norm_step(:,k)-N_norm_stable(:,k);
+% %             PN(:,k) = N_norm_step(:,k);
+%         end
+%         
+%         PWf = Wf_norm_step-Wf_norm_stable;
+%         PWf = Wf_norm_step;
+        
+%         delta_y{j,i} = [PN,PP,PT]';
+%         delta_x{j,i} = PN';   %状态变量
+%         delta_u{j,i} = [PWf';data_step(:,50:51)'];  %控制变量
+%         delta_p{j,i} = data_step(:,index_h+49)'-1;   %健康参数
+%         delta_up{j,i} = [delta_u{j,i};data_step(:,index_h+49)'-1];  %控制+健康
+%         delta_xx{j,i} = delta_x{j,i}(:,2:end);
+%         delta_xx{j,i} = [delta_xx{j,i},delta_x{j,i}(:,end)];
+%         x_{j,i} = [delta_x{j,i};delta_up{j,i}];
+%         y_{j,i} = [delta_xx{j,i};delta_y{j,i}];
     end
     y_stable{j} = mean_stable(y_index);
 %     Wf_stable{j} = [Wf_norm_stable,data_stable(:,50:51),data_step(:,index_h+49)-1];
@@ -86,7 +118,7 @@ for j = 1:11
     [P,pp] = lsqnonlin(fun,H0);
 %     P(abs(P)<0.000001) = 0;
     pp
-    clear  l_p l_t size_a size_b  A B C D L M BL DM fun
+    clear  l_p l_t size_a size_b  A B C D L M BL DM
     P_(:,:,j) = P;
     Nl(j) = mean_stable(1);  %取一个风扇转速稳态值 
 end
@@ -96,22 +128,14 @@ save('data_cal\\y_stable.mat','y_stable');
 save('data_cal\\u_stable.mat','u_stable');
 % save('data_cal\\N_stable.mat','N_stable');save('data_cal\\Wf_stable.mat','Wf_stable');
 for j = 1:size(P_,3)
-%     Aa = Nx(:,:,j)*P_(1:num_state,1:num_state,j)/Nx(:,:,j);
-%     Ba = P_(1:num_state,num_state+1:num_state+1+num_control-1,j);
-%     La = P_(1:num_state,num_state+1+num_control:end,j);
-%     Ca = Ny(:,:,j)*P_(num_state+1:end,1:num_state,j)/Nx(:,:,j);
-%     Da = P_(num_state+1:end,num_state+1:num_state+1+num_control-1,j);
-%     Ma = P_(num_state+1:end,num_state+1+num_control:end,j);
-%     BLa = Nx(:,:,j)*[Ba,La]/Nuhp(:,:,j);
-%     DMa = Ny(:,:,j)*[Da,Ma]/Nuhp(:,:,j);
-    Aa = P_(1:num_state,1:num_state,j);
+    Aa = Nx(:,:,j)*P_(1:num_state,1:num_state,j)/Nx(:,:,j);
     Ba = P_(1:num_state,num_state+1:num_state+1+num_control-1,j);
     La = P_(1:num_state,num_state+1+num_control:end,j);
-    Ca = P_(num_state+1:end,1:num_state,j);
+    Ca = Ny(:,:,j)*P_(num_state+1:end,1:num_state,j)/Nx(:,:,j);
     Da = P_(num_state+1:end,num_state+1:num_state+1+num_control-1,j);
     Ma = P_(num_state+1:end,num_state+1+num_control:end,j);
-    BLa = [Ba,La];
-    DMa = [Da,Ma];
+    BLa = Nx(:,:,j)*[Ba,La]/Nuhp(:,:,j);
+    DMa = Ny(:,:,j)*[Da,Ma]/Nuhp(:,:,j);
     % 把ABCD连续化。通过matlab自带的函数d2c。
 %     sys = ss(Aa, BLa, Ca, DMa, T);
 %     sys_c = d2c(sys);
