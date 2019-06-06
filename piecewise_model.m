@@ -13,6 +13,10 @@ load('data_cal\\A_k.mat');load('data_cal\\B_k.mat');load('data_cal\\C_k.mat');lo
 load('data_cal\\mean_design.mat');
 load('data_cal\\HP_index.mat');load('data_cal\\T_index.mat');load('data_cal\\P_index.mat');load('data_cal\\U_index.mat');
 load('data_cal\\y_index.mat');load('data_cal\\x_index.mat');
+load('data_cal\\Nx.mat');
+load('data_cal\\Ny.mat');
+load('data_cal\\Nu.mat');
+load('data_cal\\Nuhp.mat');
 t = (size(test_data,1)-1)*0.02;
 T = 0.02;
 index_data = [0,1,2,4,5,6,7,8,9,10,11,12,13];

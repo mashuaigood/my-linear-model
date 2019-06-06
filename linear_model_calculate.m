@@ -33,6 +33,9 @@ for j = 1:11
 
 %% 计算稳态的均值，并且构造状态、测量、控制量的归一化矩阵
     mean_stable = mean(data_stable,1);
+    mean_design(mean_design==0) = 1;
+    mean_stable = mean_stable./mean_design;
+    
     Nx(:,:,j) = diag(mean_design(N_i));
     Ny(:,:,j) = diag(mean_design([N_i,P_i,T_i]));
     Nu(:,:,j) = diag(mean_design(U_index)+[0,1,1]);
@@ -129,18 +132,6 @@ A_k = [[A,L];repmat([zeros(length(index_h),size(A,2)),eye(length(index_h))],[1,1
 B_k = [B;repmat(zeros(size(delta_p{1,1},1),size(B,2)),[1,1,size(B,3)])];
 C_k = [C,M];
 D_k = D;
-save('data_cal\\A_k.mat','A_k');
-save('data_cal\\B_k.mat','B_k');
-save('data_cal\\C_k.mat','C_k');
-save('data_cal\\D_k.mat','D_k');
-save('data_cal\\mean_design.mat','mean_design');
-% save('data_cal\\TP2_stable.mat','TP2_stable');
-save('data_cal\\P_index.mat','P_i');
-save('data_cal\\T_index.mat','T_i');
-save('data_cal\\HP_index.mat','HP_index');
-save('data_cal\\U_index.mat','U_index');
-save('data_cal\\y_index.mat','y_index');
-save('data_cal\\x_index.mat','x_index');
 
 
 

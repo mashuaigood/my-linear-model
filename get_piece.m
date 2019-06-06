@@ -34,5 +34,9 @@ piece.U_index = U_index;
 piece.K_s = K_s;
 piece.S_s = S_s;
 piece.S_det = S_det;
+piece.Nx = Nx;
+piece.Ny = Ny;
+piece.Nu = Nu;
+piece.Nuhp = Nuhp;
 save('data_cal\\piece.mat','piece')
 load('nonlinear_data\\health_data')
