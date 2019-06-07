@@ -3,8 +3,9 @@
 % 
 
 %% load the data and parameters
-load('nonlinear_data\\health_data0.mat');
-data = health_data.data;
+load('nonlinear_data\\health_data1.mat');
+data = health_data1.data;
+data = data(1:20000,:);
 load('data_cal\\piece.mat');
 
 %% preprocess the data,normalize by divide the design point data
@@ -29,7 +30,7 @@ hp_s = interp_3d(piece.Nl,piece.steadyHP,x0(1,1),method);
 % estimate 
 delta_x_hat = zeros(size(x,1)+size(hp,1),size(x,2));
 x_hat = zeros(size(x,1)+size(hp,1),size(x,2));% initialize the augmented x-hat 
-x_hat(:,1) = [x0';hp_s];
+x_hat(:,1) = [x0';hp(:,1)];
 y_hat = zeros(size(y));% initialize y_hat
 delta_y_hat = zeros(size(y));
 err = zeros(size(y));
@@ -51,3 +52,6 @@ for i = 1:size(data,1)-1
     hp_s = interp_3d(piece.Nl,piece.steadyHP,up,method);
     
 end
+    delta_y_hat(:,i+1) = C*delta_x_hat(:,i+1)+D*(u(:,i+1)-u_s);
+    y_hat(:,i+1) = delta_y_hat(:,i+1)+y_s;
+    err(:,i+1) = y(:,i+1)-y_hat(:,i+1);
