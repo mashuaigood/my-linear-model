@@ -40,3 +40,4 @@ piece.Nu = Nu;
 piece.Nuhp = Nuhp;
 save('data_cal\\piece.mat','piece')
 load('nonlinear_data\\health_data')
+load('nonlinear_data\\health_data1')
