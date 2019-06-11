@@ -22,7 +22,7 @@ R = diag(y_noise.^2);
 % R = 0.002^2*eye(size(C_k,1));
 %% system noise
 Q =  0.002^2*eye(size(A_k,1));
-Q_ = 0.002*eye(size(A,1));
+Q_ = 0.002^2*eye(size(A,1));
 %% kalman gain
 for k = 1:size(A_k,3)
 %     w = 0.002^2*randn(size(Wf_stable{1},1),size(Q,1));

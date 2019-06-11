@@ -1,4 +1,5 @@
-
+%%% generate the sensor-fault data ,
+% input: fault sensor and severity 
 %%% augmented kalman filter design
 %
 clear
@@ -9,8 +10,8 @@ data = health_data.data;
 load('data_cal\\piece.mat');
 num = 1:10;
 seve = [0,-0.01,-0.02,-0.03,-0.04];
-fault_time = 50/0.02;
-cut = 200;
+fault_time = 1;
+cut = 500;
 input = [];output = [];
 for j = 1:length(num)
     for k = 1:length(seve)
