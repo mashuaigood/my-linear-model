@@ -4,14 +4,14 @@
 %
 clear
 %% load the data and parameters
-load('nonlinear_data\\health_data.mat');
-data = health_data.data;
-% data = data(1:20000,:);
+load('nonlinear_data\\tdata.mat');
+data = tdata.data;
+% data = data(1:10000,:);
 load('data_cal\\piece.mat');
 load('net_normalANNfit');
 num = 1:10;
 seve = [0,-0.01,-0.025,-0.03,-0.04];
-fault_time = 1;
+fault_time = 1000;
 cut = 500;
 input = [];output = [];
 j = 4; k = 3;
@@ -29,9 +29,9 @@ P_noise = [0.164,0.164,0.15,0.15]*0.01;
 T_noise = [0.23,0.23,0.097,0.097]*0.01;
 y_svar = [N_noise,P_noise,T_noise];
 R = diag(y_svar.^2);
-meas_noise = R*randn(size(y));
+meas_noise = sqrt(R)*randn(size(y));
 y = y + meas_noise;
-% y (num(j),fault_time:end)=  y_(num(j),fault_time:end)+seve(k);
+y (num(j),fault_time:end)=  y_(num(j),fault_time:end)+seve(k);
 %% kalman estimate
 % interpolate the initial parameters
 method = 'linear';
@@ -48,6 +48,7 @@ u_s = interp_3d(piece.Nl,piece.steadyInput,x0(1,1),method);
 hp_s = interp_3d(piece.Nl,piece.steadyHP,x0(1,1),method);
 L = interp_3d(piece.Nl,piece.L,x0(1,1),method);
 M = interp_3d(piece.Nl,piece.M,x0(1,1),method);
+S = interp_3d(piece.Nl,piece.S_s,x0(1,1),method);
 % initialize
 delta_x_hat = zeros(size(x,1),size(x,2));
 x_hat = zeros(size(x,1),size(x,2));% initialize the augmented x-hat
@@ -69,13 +70,15 @@ err = zeros(size(y));
 [hp_s_,size_hp] = trans3d_2d(piece.steadyHP);    hp_l = size_hp(1)*size_hp(2);
 [L_,size_L] = trans3d_2d(piece.L);    L_l = size_L(1)*size_L(2);
 [M_,size_M] = trans3d_2d(piece.M);    M_l = size_M(1)*size_M(2);
+[S_,size_S] = trans3d_2d(piece.S_s);    S_l = size_S(1)*size_S(2);
 %吧二维的合并在一起，以便同时插值
-vec = [A_,B_,C_,D_,K_,x_s_,y_s_,u_s_,hp_s_,L_,M_];
+vec = [A_,B_,C_,D_,K_,x_s_,y_s_,u_s_,hp_s_,L_,M_,S_];
 
 fault_vector = [0,repmat(-0.03,1,10)];
-model_num = length(fault_vector);   
+ model_num = length(fault_vector);   
 
 %interpolate
+
 for j = 1:model_num
     % fault vector for ANN input
     f = fault_vector(j);
@@ -85,11 +88,11 @@ for j = 1:model_num
     else
         input_f(j-1) = f;
     end
-    
+    tic
     for i = 1:size(data,1)-1
         
         % net input
-        input_net = [input_f+y(:,i);u(:,i);1;1];% 训练网络的时候，传感器故障向量吧输出也放进去了，并不是单纯的向量，现在需要先把输出加上
+        input_net = [input_f+y_(:,i);u(:,i);1;1];% 训练网络的时候，传感器故障向量吧输出也放进去了，并不是单纯的向量，现在需要先把输出加上
     % 重新训练一个网络之后在改
         hp(:,i) = net(input_net);
         delta_y_hat(:,i) = C*delta_x_hat(:,i)+D*(u(:,i)-u_s)+M*hp(:,i);
@@ -98,6 +101,10 @@ for j = 1:model_num
         delta_x_hat(:,i+1) = A*delta_x_hat(:,i)+B*(u(:,i)-u_s)+L*hp(:,i)+K*err(:,i);
         x_hat(:,i+1) = delta_x_hat(:,i+1)+x_s;
         up = x_hat(1,i+1);
+        %概率计算，计算每一个模型的故障概率
+%         f(j,i) = 1/(2*pi)^10/sqrt(5*10^-56)*exp(-0.5*err(:,i)'*inv(S)*err(:,i));
+        ff(j,i) = exp(-0.5*err(:,i)'*inv(S)*err(:,i));
+        
         %插值计算非常耗费时间，可以进行适当优化，吧所有数据归集到一个向量中，
         %进行一次插值，然后再进行分割。这样会节约很多时间，有时间需要进行优化..。。。拖延警告。。。。
         %  已优化,good job
@@ -116,9 +123,11 @@ for j = 1:model_num
         hp_s = reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l),size_hp);
         L =    reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l+L_l),size_L);
         M =    reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l+L_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l+L_l+M_l),size_M);
+        S =    reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l+L_l+M_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l+L_l+M_l+S_l),size_S);
         
     end
-    input_net = [input_f+y(:,i+1);u(:,i+1);1;1];% 训练网络的时候，传感器故障向量吧输出也放进去了，并不是单纯的向量，现在需要先把输出加上
+    toc
+    input_net = [input_f+y_(:,i+1);u(:,i+1);1;1];% 训练网络的时候，传感器故障向量吧输出也放进去了，并不是单纯的向量，现在需要先把输出加上
     % 重新训练一个网络之后在改
     hp(:,i+1) = net(input_net);
     delta_y_hat(:,i+1) = C*delta_x_hat(:,i+1)+D*(u(:,i+1)-u_s)+M*hp(:,i+1);
@@ -126,21 +135,33 @@ for j = 1:model_num
     err(:,i+1) = y(:,i+1)-y_hat(:,i+1);
 %     f = exp(-0.5*)
     err_all(:,:,j) = err;
+    ff(j,i+1) = exp(-0.5*err(:,i+1)'*inv(S)*err(:,i+1));
+    j
 end
-p = zeros(size(err));
-p0 = [1,zeros(1,10)]';
-for i = 1:size(err,2)
+p = zeros(size(ff))+0.001;
+p0 = [1,zeros(1,10)+0.001]';
+for i = 1:size(ff,2)
     vv = zeros(size(err,1),size(err_all,3));
-    for j = 1:size(err_all,3)
-        vv(:,j) = err_all(:,i,j);
-    end
-    f = exp(-0.5*vv'*piece.S_s*vv);
+%     for j = 1:size(err_all,3)
+%         vv(:,j) = err_all(:,i,j);
+%     end
+%     f = exp(-0.5*vv'*piece.S_s*vv);
+
     if i == 1
-        p(:,i) = f.*p0/sum(f.*p0);
+        sum_ff = sum(ff(:,i).*p0);
+        if sum_ff ==0
+            sum_ff = 1;
+        end
+        p(:,i) = ff(:,i).*p0./sum_ff;
     else
-        p(:,i) = f.*p(:,i-1)/sum(f.*p(:,i-1));
+         sum_ff = sum(ff(:,i).*p(:,i-1));
+        if sum_ff ==0
+            sum_ff = 1;
+        end
+        p(:,i) = ff(:,i).*p(:,i-1)./sum_ff;
     end
     p(p == 0) = 0.001;
+   
 end
      
     
