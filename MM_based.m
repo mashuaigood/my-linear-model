@@ -160,7 +160,7 @@ for i = 1:size(ff,2)
         end
         p(:,i) = ff(:,i).*p(:,i-1)./sum_ff;
     end
-    p(p == 0) = 0.001;
+    p(p < 0.01) = 0.001;
    
 end
      
