@@ -1,14 +1,13 @@
 %%% multiple model fault diagnosis 
 
-
-%
 clear
 %% load the data and parameters
-load('nonlinear_data\\tdata.mat');
-data = tdata.data;
+load('nonlinear_data\\test_data_actu.mat');
+data = test_data_actu.data;
 % data = data(1:10000,:);
 load('data_cal\\piece.mat');
-load('net_normalANNfit');
+% load('net_normalANNfit');
+load('lrn_net');
 num = 1:10;
 seve = [0,-0.01,-0.025,-0.03,-0.04];
 fault_time = 1000;
@@ -31,7 +30,7 @@ y_svar = [N_noise,P_noise,T_noise];
 R = diag(y_svar.^2);
 meas_noise = sqrt(R)*randn(size(y));
 y = y + meas_noise;
-y (num(j),fault_time:end)=  y_(num(j),fault_time:end)+seve(k);
+% y (num(j),fault_time:end)=  y_(num(j),fault_time:end)+seve(k);
 %% kalman estimate
 % interpolate the initial parameters
 method = 'linear';
@@ -74,7 +73,7 @@ err = zeros(size(y));
 %吧二维的合并在一起，以便同时插值
 vec = [A_,B_,C_,D_,K_,x_s_,y_s_,u_s_,hp_s_,L_,M_,S_];
 
-fault_vector = [0,repmat(-0.03,1,10)];
+fault_vector = [0,repmat(-0.03,1,12)];
  model_num = length(fault_vector);   
 
 %interpolate
@@ -92,9 +91,12 @@ for j = 1:model_num
     for i = 1:size(data,1)-1
         
         % net input
-        input_net = [input_f+y_(:,i);u(:,i);1;1];% 训练网络的时候，传感器故障向量吧输出也放进去了，并不是单纯的向量，现在需要先把输出加上
+        input_net = [input_f;u(:,i);1;1];% 训练网络的时候，传感器故障向量吧输出也放进去了，并不是单纯的向量，现在需要先把输出加上
     % 重新训练一个网络之后在改
-        hp(:,i) = net(input_net);
+%         in_net = con2seq(input_net);
+
+         hp(:,i) = lrn_net(input_net);
+
         delta_y_hat(:,i) = C*delta_x_hat(:,i)+D*(u(:,i)-u_s)+M*hp(:,i);
         y_hat(:,i) = delta_y_hat(:,i)+y_s;
         err(:,i) = y(:,i)-y_hat(:,i);
@@ -127,9 +129,10 @@ for j = 1:model_num
         
     end
     toc
-    input_net = [input_f+y_(:,i+1);u(:,i+1);1;1];% 训练网络的时候，传感器故障向量吧输出也放进去了，并不是单纯的向量，现在需要先把输出加上
-    % 重新训练一个网络之后在改
-    hp(:,i+1) = net(input_net);
+    input_net = [input_f;u(:,i+1);1;1];% 训练网络的时候，传感器故障向量吧输出也放进去了，并不是单纯的向量，现在需要先把输出加上
+    % 重新训练一个网络之后在
+%     in_net = con2seq(input_net);
+    hp(:,i+1) = lrn_net(input_net);
     delta_y_hat(:,i+1) = C*delta_x_hat(:,i+1)+D*(u(:,i+1)-u_s)+M*hp(:,i+1);
     y_hat(:,i+1) = delta_y_hat(:,i+1)+y_s;
     err(:,i+1) = y(:,i+1)-y_hat(:,i+1);
@@ -139,7 +142,7 @@ for j = 1:model_num
     j
 end
 p = zeros(size(ff))+0.001;
-p0 = [1,zeros(1,10)+0.001]';
+p0 = [1,zeros(1,12)+0.001]';
 for i = 1:size(ff,2)
     vv = zeros(size(err,1),size(err_all,3));
 %     for j = 1:size(err_all,3)
@@ -163,7 +166,7 @@ for i = 1:size(ff,2)
     p(p < 0.01) = 0.001;
    
 end
-     
+    plot(p') 
     
     
 clear A_ A_l B_ B_l C_ C_l D_ D_l K_ K_l x_s_ x_l y_s_ y_l u_s_ u_l hp_s_ hp_l ...

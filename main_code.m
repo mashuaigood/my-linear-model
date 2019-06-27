@@ -16,8 +16,14 @@ cut = 500;
 input1 = [];output1 = [];input2 = [];output2 = [];
 f_vec = [];f_vec2 = [];
 
+y_obem = (data4sensor(:,piece.y_index)./piece.mean_design(:,piece.y_index))';
+u_obem = (data4sensor(:,piece.U_index)./piece.mean_design(:,piece.U_index(1,1)))';
+x_obem = (data4sensor(:,piece.x_index)./piece.mean_design(:,piece.x_index))';
+hp_obem = data4sensor(:,piece.HP_index)'-1;
+x_hp_obem = [x_obem;hp_obem];
+
 for j = 1:length(num)
-    
+% for j = 1:1 
     for k = 1:length(seve)
         %% preprocess the data,normalize by divide the design point data
         fault_vector = zeros(12,length(data4sensor));
@@ -44,8 +50,9 @@ for j = 1:length(num)
         hp_s = interp_3d(piece.Nl,piece.steadyHP,x0(1,1),method);
         % estimate
         delta_x_hat = zeros(size(x,1)+size(hp,1),size(x,2));
+        delta_x_hat_pre = delta_x_hat;
         x_hat = zeros(size(x,1)+size(hp,1),size(x,2));% initialize the augmented x-hat
-        x_hat(:,1) = [x0';hp_s];
+        x_hat(:,1) = x_hp_obem(:,1);
         y_hat = zeros(size(y));% initialize y_hat
         delta_y_hat = zeros(size(y));
         err = zeros(size(y));
@@ -64,11 +71,13 @@ for j = 1:length(num)
         vec = [A_,B_,C_,D_,K_,x_s_,y_s_,u_s_,hp_s_];
         %interpolate
         for i = 1:size(data4sensor,1)-1
-            delta_y_hat(:,i) = C*delta_x_hat(:,i)+D*(u(:,i)-u_s);
-            y_hat(:,i) = delta_y_hat(:,i)+y_s;
+            delta_x_hat(:,i) = x_hat(:,i)-x_hp_obem(:,i);
+            delta_x_hat_pre(:,i) = A*delta_x_hat(:,i);
+            delta_y_hat(:,i) = C*delta_x_hat_pre(:,i);
+            y_hat(:,i) = delta_y_hat(:,i)+y_obem(:,i);
             err(:,i) = y(:,i)-y_hat(:,i);
-            delta_x_hat(:,i+1) = A*delta_x_hat(:,i)+B*(u(:,i)-u_s)+K*err(:,i);
-            x_hat(:,i+1) = delta_x_hat(:,i+1)+[x_s;hp_s];
+            delta_x_hat(:,i+1) = A*delta_x_hat(:,i)+K*err(:,i);
+            x_hat(:,i+1) = delta_x_hat(:,i+1)+x_hp_obem(:,i);
             up = x_hat(1,i+1);
             %插值计算非常耗费时间，可以进行适当优化，吧所有数据归集到一个向量中，
             %进行一次插值，然后再进行分割。这样会节约很多时间，有时间需要进行优化..。。。拖延警告。。。。
@@ -85,19 +94,11 @@ for j = 1:length(num)
             y_s =  reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l),size_y);
             u_s =  reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+y_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l),size_u);
             hp_s = reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l),size_hp);
-            %     A = interp_3d(piece.Nl,piece.A_k,up,method);
-            %     B = interp_3d(piece.Nl,piece.B_k,up,method);
-            %     C = interp_3d(piece.Nl,piece.C_k,up,method);
-            %     D = interp_3d(piece.Nl,piece.D_k,up,method);
-            %     K = interp_3d(piece.Nl,piece.K,up,method);
-            %     x_s = interp_3d(piece.Nl,piece.steadyState,up,method);
-            %     y_s = interp_3d(piece.Nl,piece.steadyOutput,up,method);
-            %     u_s = interp_3d(piece.Nl,piece.steadyInput,up,method);
-            %     hp_s = interp_3d(piece.Nl,piece.steadyHP,up,method);
             
         end
-        delta_y_hat(:,i+1) = C*delta_x_hat(:,i+1)+D*(u(:,i+1)-u_s);
-        y_hat(:,i+1) = delta_y_hat(:,i+1)+y_s;
+        delta_x_hat_pre(:,i+1) = A*delta_x_hat(:,i+1);
+        delta_y_hat(:,i+1) = C*delta_x_hat_pre(:,i+1);
+        y_hat(:,i+1) = delta_y_hat(:,i+1)+y_obem(i+1);
         err(:,i+1) = y(:,i+1)-y_hat(:,i+1);
         clear A_ A_l B_ B_l C_ C_l D_ D_l K_ K_l x_s_ x_l y_s_ y_l u_s_ u_l hp_s_ hp_l ...
             size_A size_B size_C size_D size_K size_x size_y size_u size_hp
@@ -108,14 +109,13 @@ for j = 1:length(num)
         out = x_hat(3:end,cut:end);
         input1 = [input1,in];
         output1 = [output1,out];
-        j
-        k
+  
     end
 end
 clear in out j k 
 %% actuator and component fault data 
 %  AC : actuator and component
-
+% 
 for k = 1:15
     fault_vector = zeros(12,length(data4sensor));
     if k<=5
@@ -149,7 +149,7 @@ for k = 1:15
     % estimate
     delta_x_hat = zeros(size(x,1)+size(hp,1),size(x,2));
     x_hat = zeros(size(x,1)+size(hp,1),size(x,2));% initialize the augmented x-hat
-    x_hat(:,1) = [x0';hp_s];
+    x_hat(:,1) = x_hp_obem(:,1);
     y_hat = zeros(size(y));% initialize y_hat
     delta_y_hat = zeros(size(y));
     err = zeros(size(y));
@@ -168,11 +168,12 @@ for k = 1:15
     vec = [A_,B_,C_,D_,K_,x_s_,y_s_,u_s_,hp_s_];
     %interpolate
     for i = 1:size(AC_fault_data ,1)-1
-        delta_y_hat(:,i) = C*delta_x_hat(:,i)+D*(u(:,i)-u_s);
-        y_hat(:,i) = delta_y_hat(:,i)+y_s;
+        delta_x_hat(:,i) = x_hat(:,i)-x_hp_obem(:,i);
+        delta_y_hat(:,i) = C*delta_x_hat(:,i);
+        y_hat(:,i) = delta_y_hat(:,i)+y_obem(:,i);
         err(:,i) = y(:,i)-y_hat(:,i);
-        delta_x_hat(:,i+1) = A*delta_x_hat(:,i)+B*(u(:,i)-u_s)+K*err(:,i);
-        x_hat(:,i+1) = delta_x_hat(:,i+1)+[x_s;hp_s];
+        delta_x_hat(:,i+1) = A*delta_x_hat(:,i)+K*err(:,i);
+        x_hat(:,i+1) = delta_x_hat(:,i+1)+x_hp_obem(:,i);
         up = x_hat(1,i+1);
         %插值计算非常耗费时间，可以进行适当优化，吧所有数据归集到一个向量中，
         %进行一次插值，然后再进行分割。这样会节约很多时间，有时间需要进行优化..。。。拖延警告。。。。
@@ -190,18 +191,11 @@ for k = 1:15
         u_s =  reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+y_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l),size_u);
         hp_s = reshape(out(A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+1:A_l+B_l+C_l+D_l+K_l+x_l+y_l+u_l+hp_l),size_hp);
         %     A = interp_3d(piece.Nl,piece.A_k,up,method);
-        %     B = interp_3d(piece.Nl,piece.B_k,up,method);
-        %     C = interp_3d(piece.Nl,piece.C_k,up,method);
-        %     D = interp_3d(piece.Nl,piece.D_k,up,method);
-        %     K = interp_3d(piece.Nl,piece.K,up,method);
-        %     x_s = interp_3d(piece.Nl,piece.steadyState,up,method);
-        %     y_s = interp_3d(piece.Nl,piece.steadyOutput,up,method);
-        %     u_s = interp_3d(piece.Nl,piece.steadyInput,up,method);
-        %     hp_s = interp_3d(piece.Nl,piece.steadyHP,up,method);
+
         
     end
-    delta_y_hat(:,i+1) = C*delta_x_hat(:,i+1)+D*(u(:,i+1)-u_s);
-    y_hat(:,i+1) = delta_y_hat(:,i+1)+y_s;
+    delta_y_hat(:,i+1) = C*delta_x_hat(:,i+1);
+    y_hat(:,i+1) = delta_y_hat(:,i+1)+y_obem(:,i+1);
     err(:,i+1) = y(:,i+1)-y_hat(:,i+1);
     clear A_ A_l B_ B_l C_ C_l D_ D_l K_ K_l x_s_ x_l y_s_ y_l u_s_ u_l hp_s_ hp_l ...
         size_A size_B size_C size_D size_K size_x size_y size_u size_hp
@@ -216,6 +210,6 @@ for k = 1:15
 end
 input = [input1,input2];
 output = [output1,output2];
-% save('input.mat','input');
-% save('output.mat','output');
+save('input.mat','input');
+save('output.mat','output');
 
