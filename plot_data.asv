@@ -1,0 +1,18 @@
+
+
+design_data = piece.mean_design;
+pwl_err = abs(PWL-y_obem)./PWL;
+HP_HKF_err = abs(HP_HKF.Data-y_obem.Data)./HP_HKF.data;
+t = 0:0.02:400;
+
+figure(1)
+subplot 221
+plot(u*design_data(piece.U_index(1)))
+ylim([0.25,0.52])
+
+subplot 222
+plot(plw_err)
+hold on
+plot(HP_HKF_err)
+hold off
+
