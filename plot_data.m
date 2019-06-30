@@ -33,3 +33,8 @@ hold on
 plot(t,HP_HKF_err(:,9)*100,'r--')
 hold off
 xlabel('Time(s)'),ylabel('errorP_4_5(%)'),title(''),legend('PWL','HP-HKF')
+
+mse_pwl = sqrt(sum(pwl_err.^2,1));
+mse_pwl = mse_pwl';
+mse_hp_hkf = sqrt(sum(HP_HKF_err.^2,1));
+mse_hp_hkf = mse_hp_hkf';
