@@ -1,12 +1,12 @@
 
-
+close all
 design_data = piece.mean_design;
 pwl_err = abs(norm_PWL-y_obem)./y_obem;
 HP_HKF_err = abs(norm_HP_HKF-y_obem)./y_obem;
 
 com_pwl_err =  abs(com_PWL-y_obem1)./y_obem1;
 com_HP_HKF_err = abs(com_HP_HKF-y_obem1)./y_obem1;
-t = 0:0.02:400;
+t = 0:0.02:500;
 %%  zhengchang  
 figure(1)
 title('no fault model')
