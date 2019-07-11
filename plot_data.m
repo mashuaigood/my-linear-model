@@ -13,6 +13,7 @@ title('no fault model')
 subplot 221
 plot(u*design_data(piece.U_index(1)),'k')
 ylim([0.25,0.52])
+
 xlabel('Time(s)'),ylabel('Wf(kg/s)'),title('')
 
 subplot 222
