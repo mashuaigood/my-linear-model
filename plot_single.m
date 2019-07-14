@@ -35,7 +35,7 @@ ylabel('Fault Severity(%)','FontSize',14)
 set(gca,'xticklabel',[]);
 set(gca,'position',[0.1 0.38 0.8 0.27])
 grid on
-legend('F_2','F_3','F_4','F_5','F_6','F_7','Location','northwest','NumColumns',6,'fontsize',16)
+legend('f_2','f_3','f_4','f_5','f_6','f_7','Location','northwest','NumColumns',6,'fontsize',16)
 hold off
 set(gca,'FontSize',16);
 
@@ -54,7 +54,7 @@ ylabel('Mode Probality','FontSize',14)
 xlabel('time(s)','FontSize',14)
 grid on
 set(gca,'FontSize',16);
-legend('F_1','F_2','F_3','F_4','F_5','F_6','F_7','Location','northwest','NumColumns',7,'fontsize',16)
+legend('f_1','f_2','f_3','f_4','f_5','f_6','f_7','Location','northwest','NumColumns',7,'fontsize',16)
 % set(gca,'xlim',[0 4*pi]);
 % set(gca,'xticklabel',[]);
 set(gca,'position',[0.1 0.11 0.8 0.27])
