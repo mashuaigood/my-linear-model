@@ -24,7 +24,7 @@ x_index = N_i;
 %% 用设计点参数进行归一化
 
 for j = 1:11
-    data = eval(['load(''E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\toolbox\CivilEnginelibV1\linemodel\com_data',num2str(j),'.mat'')']);
+    data = eval(['load(''E:\Program Files (x86)\MATLAB\MATLAB Production Server\R2014a\toolbox\CivilEnginelibV1\linemodel\act_data',num2str(j),'.mat'')']);
     data_stable = eval(['data.data',num2str(j)]);
 %     %把每一组数据的稳态工况下的T2和P2取出来，以方便后面的数据恢复工作。
 %     T2_stable = mean(data_stable(:,T2_index));
@@ -93,10 +93,10 @@ for j = 1:11
     P_(:,:,j) = P;
     Nl(j) = mean_stable(1);  %取一个风扇转速稳态值 
 end
-save('data_cal\\com_P_.mat','P_');
-save('data_cal\\com_Nl.mat','Nl');
-save('data_cal\\com_y_stable.mat','y_stable');
-save('data_cal\\com_u_stable.mat','u_stable');
+save('data_cal\\act_P_.mat','P_');
+save('data_cal\\act_Nl.mat','Nl');
+save('data_cal\\act_y_stable.mat','y_stable');
+save('data_cal\\act_u_stable.mat','u_stable');
 % save('data_cal\\N_stable.mat','N_stable');save('data_cal\\Wf_stable.mat','Wf_stable');
 for j = 1:size(P_,3)
 %     Aa = Nx(:,:,j)*P_(1:num_state,1:num_state,j)/Nx(:,:,j);
@@ -128,10 +128,10 @@ for j = 1:size(P_,3)
 end
 %% save parameters
 % B = BL(:,1:size(Ba,2),:);L = BL(:,size(Ba,2)+1:end,:);D = DM(:,1:size(Da,2),:);M = DM(:,size(Da,2)+1:end,:);
-save('data_cal\\com_A.mat','A');%save('data_cal\\BL.mat','BL');
-save('data_cal\\com_C.mat','C');%save('data_cal\\DM.mat','DM');
-save('data_cal\\com_D.mat','D');%save('data_cal\\M.mat','M');
-save('data_cal\\com_B.mat','B');%save('data_cal\\L.mat','L');
+save('data_cal\\act_A.mat','A');%save('data_cal\\BL.mat','BL');
+save('data_cal\\act_C.mat','C');%save('data_cal\\DM.mat','DM');
+save('data_cal\\act_D.mat','D');%save('data_cal\\M.mat','M');
+save('data_cal\\act_B.mat','B');%save('data_cal\\L.mat','L');
 
 % 状态方程有变化,需要把健康参数增广到状态变量里面去。
 % A_k = [[A,L];repmat([zeros(length(index_h),size(A,2)),zeros(length(index_h),size(L,2))],[1,1,size(A,3)])];

@@ -5,10 +5,10 @@
 % load('data_cal\\C_k.mat');
 % load('data_cal\\D_k.mat');
  load('data_cal\\mean_design.mat');
-load('data_cal\\com_A.mat');
-load('data_cal\\com_B.mat');
-load('data_cal\\com_C.mat');
-load('data_cal\\com_D.mat');
+load('data_cal\\act_A.mat');
+load('data_cal\\act_B.mat');
+load('data_cal\\act_C.mat');
+load('data_cal\\act_D.mat');
 load('data_cal\\y_index.mat');
 clear K 
 %% measurement noise
@@ -19,8 +19,8 @@ T_noise = [0.23,0.23,0.097,0.097]*0.01;
 y_svar = [N_noise,P_noise,T_noise];
 y_noise = y_svar;
 % R = diag(y_noise.^2);
-% R = 0.002^2*eye(size(C_k,1));
 R = 0.02^2*eye(size(C,1));
+% R = 0.002^2*eye(size(C_k,1));
 %% system noise
 % Q =  0.002^2*eye(size(A_k,1));
 Q_ = 0.002^2*eye(size(A,1));
@@ -40,7 +40,7 @@ for k = 1:size(A,3)
     R_det = det(R);
 end
 
-save('data_cal\\com_K.mat','K');
+save('data_cal\\act_K.mat','K');
 % save('data_cal\\K_s.mat','K_s');
-save('data_cal\\com_S.mat','S');
+save('data_cal\\act_S.mat','S');
 % clear K Q R w v 
