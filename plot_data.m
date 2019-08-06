@@ -26,7 +26,7 @@ plot(t,pwl_err(:,1)*100,'k')
 hold on
 plot(t,HP_HKF_err(:,1)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorN_l(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorN_l(%)'),title(''),legend('PWL','HP-ReHM')
 % 
 % sum1 = sum(pwl_err(:,1))
 % sum2 = sum(HP_HKF_err(:,1))
@@ -35,14 +35,14 @@ plot(t,pwl_err(:,4)*100,'k')
 hold on
 plot(t,HP_HKF_err(:,4)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorT_2_1(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorT_2_1(%)'),title(''),legend('PWL','HP-ReHM')
 
 subplot 224
 plot(t,pwl_err(:,9)*100,'k')
 hold on
 plot(t,HP_HKF_err(:,9)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorP_4_5(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorP_4_5(%)'),title(''),legend('PWL','HP-ReHM')
 
 mse_pwl = sqrt(sum(pwl_err.^2,1));
 mse_pwl = mse_pwl';
@@ -64,7 +64,7 @@ plot(t,com_pwl_err(:,1)*100,'k')
 hold on
 plot(t,com_HP_HKF_err(:,1)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorN_l(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorN_l(%)'),title(''),legend('PWL','HP-ReHM')
 % 
 % sum1 = sum(pwl_err(:,1))
 % sum2 = sum(HP_HKF_err(:,1))
@@ -73,14 +73,14 @@ plot(t,com_pwl_err(:,4)*100,'k')
 hold on
 plot(t,com_HP_HKF_err(:,4)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorT_2_1(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorT_2_1(%)'),title(''),legend('PWL','HP-ReHM')
 
 subplot 224
 plot(t,com_pwl_err(:,9)*100,'k')
 hold on
 plot(t,com_HP_HKF_err(:,9)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorP_4_5(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorP_4_5(%)'),title(''),legend('PWL','HP-ReHM')
 
 com_mse_pwl = sqrt(sum(com_pwl_err.^2,1));
 com_mse_pwl = com_mse_pwl';
@@ -99,7 +99,7 @@ plot(t,act_pwl_err(:,1)*100,'k')
 hold on
 plot(t,act_HP_HKF_err(:,1)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorN_l(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorN_l(%)'),title(''),legend('PWL','HP-ReHM')
 % 
 % sum1 = sum(pwl_err(:,1))
 % sum2 = sum(HP_HKF_err(:,1))
@@ -108,14 +108,14 @@ plot(t,act_pwl_err(:,4)*100,'k')
 hold on
 plot(t,act_HP_HKF_err(:,4)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorT_2_1(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorT_2_1(%)'),title(''),legend('PWL','HP-ReHM')
 
 subplot 224
 plot(t,act_pwl_err(:,9)*100,'k')
 hold on
 plot(t,act_HP_HKF_err(:,9)*100,'r--')
 hold off
-xlabel('Time(s)'),ylabel('errorP_4_5(%)'),title(''),legend('PWL','HP-HKF')
+xlabel('Time(s)'),ylabel('errorP_4_5(%)'),title(''),legend('PWL','HP-ReHM')
 
 act_mse_pwl = sqrt(sum(act_pwl_err.^2,1));
 act_mse_pwl = act_mse_pwl';
