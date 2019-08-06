@@ -36,11 +36,11 @@ for i = 1:10
     y_svar = [N_noise,P_noise,T_noise];
     y_noise = y_svar;
 %     R = diag(y_noise.^2);
-    R = 0.02^2*eye(size(C,1));
+    R = 0.003*eye(size(C,1));
     % R = 0.002^2*eye(size(C_k,1));
     %% system noise
     % Q =  0.002^2*eye(size(A_k,1));
-    Q_ = 0.002^2*eye(size(A,1));
+    Q_ = 0.003^2*eye(size(A,1));
     %% kalman gain
     for k = 1:size(A,3)
         %     w = 0.002^2*randn(size(Wf_stable{1},1),size(Q,1));

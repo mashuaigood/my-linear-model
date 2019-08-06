@@ -39,5 +39,5 @@ act_piece.S = S;
 % com_piece.Nu = Nu;
 % com_piece.Nuhp = Nuhp;
 save('data_cal\\act_piece.mat','act_piece')
-load('nonlinear_data\\health_data')
-load('nonlinear_data\\health_data1')
+% load('nonlinear_data\\health_data')
+% load('nonlinear_data\\health_data1')
